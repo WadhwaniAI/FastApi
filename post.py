@@ -1,20 +1,14 @@
-from cgitb import text
-from typing import Optional
 from fastapi import FastAPI
-from pydantic import BaseModel
+import schemas, models
+from database import engine
 
 app = FastAPI()
 
-
-#Blog Class
-class Blog(BaseModel):
-    title: str
-    body: str
-    published_at: Optional[bool]
+models.Base.metadata.create_all(engine)
 
 #Post
 @app.post('/blog')
-def create_blog(request: Blog):
+def create_blog(request: schemas.Blog):
     if request.published_at: return {
         "response" : {
             "blog created" : {
@@ -27,4 +21,4 @@ def create_blog(request: Blog):
         "response" : {
             "blog created" : "Not created"
         }
-    }
+    }   
