@@ -2,5 +2,10 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
+@app.get('/')
 def init() :
-    return "Sampath Houde"
+    return {
+        "Name" : "Sampath Houde",
+        "Company" : "Wadhwani AI",
+        "Location" : "Mumbai"
+    }
