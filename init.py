@@ -9,3 +9,9 @@ def init() :
         "Company" : "Wadhwani AI",
         "Location" : "Mumbai"
     }
+    
+@app.get("/about")
+def about():
+    return {
+        "about page":"About"
+    }
