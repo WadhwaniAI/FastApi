@@ -1,3 +1,4 @@
+from operator import mod
 from fastapi import Depends, FastAPI, status, Response, HTTPException
 import models, schemas
 from database import engine, SessionLocal
@@ -30,7 +31,7 @@ def all(db):
     blogs = db.query(models.Blog).all()
     return blogs 
 
-@app.get('/blog/{id}', status_code=200)
+@app.get('/blog/{id}', status_code=status.HTTP_200_OK)
 def getBlog(id, response: Response,db: Session = Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id == id).first()
     if not blog:
@@ -38,3 +39,10 @@ def getBlog(id, response: Response,db: Session = Depends(get_db)):
         #response.status_code = status.HTTP_404_NOT_FOUND
         #return {'Detail': f'Blog with id {id} is not available'}
     return blog
+
+@app.delete('/blog/{id}', status_code=status.HTTP_204_NO_CONTENT)
+def delete(id, db: Session = Depends(get_db)):
+    blog = db.query(models.Blog).filter(models.Blog.id == id).delete(synchronize_session=False)
+    db.commit()
+    return {'response': f'Blog id {id} deleted successfully.'}
+          
