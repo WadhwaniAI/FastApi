@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-import schemas, models
-from database import engine
+import blog.schemas as schemas, blog.models as models
+from blog.database import engine
 
 app = FastAPI()
 
