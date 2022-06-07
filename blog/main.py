@@ -1,11 +1,5 @@
-import email
-from hashlib import new
-from operator import mod
-from os import stat
-import re
-from unicodedata import name
 from fastapi import Depends, FastAPI, status, Response, HTTPException
-import models, schemas
+import models, schemas, hashing
 from database import engine, SessionLocal
 from sqlalchemy.orm import Session
 from typing import List
@@ -69,9 +63,11 @@ def update(id, request: schemas.Blog, db: Session = Depends(get_db)):
     db.commit()
     return {'Blog updated' : request}
 
+
 @app.post('/user', status_code=status.HTTP_201_CREATED)
 def create_user(request: schemas.User, db: Session = Depends(get_db)):
-    new_user = models.User(name=request.name, email=request.email, password=request.password)
+    hashPassword = pwd_context.hash(request.password)
+    new_user = models.User(name=request.name, email=request.email, password=hashing.Hash.bcrypt(request.password) )
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
