@@ -4,6 +4,7 @@ from fastapi import Depends, FastAPI, status, Response, HTTPException
 import models, schemas
 from database import engine, SessionLocal
 from sqlalchemy.orm import Session
+from typing import List
 
 app = FastAPI()
 
@@ -28,9 +29,14 @@ def create(request: schemas.Blog, db: Session = Depends(get_db)) :
     return new_blog
 
 @app.get('/blog') 
-def all(db):
+def all(db: Session = Depends(get_db)):
     blogs = db.query(models.Blog).all()
     return blogs 
+
+@app.get('/blogsList', status_code=status.HTTP_200_OK, response_model=List[schemas.ShowBlog])
+def showListOfBlogsTitle(db: Session = Depends(get_db)):
+    blogs = db.query(models.Blog).all()
+    return blogs
 
 @app.get('/blog/{id}', status_code=status.HTTP_200_OK, response_model=schemas.ShowBlog)
 def getBlog(id, response: Response,db: Session = Depends(get_db)):
