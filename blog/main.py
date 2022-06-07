@@ -1,7 +1,4 @@
-from ast import In
-from os import stat
-from turtle import title
-from fastapi import Depends, FastAPI, status
+from fastapi import Depends, FastAPI, status, Response, HTTPException
 import models, schemas
 from database import engine, SessionLocal
 from sqlalchemy.orm import Session
@@ -33,7 +30,11 @@ def all(db):
     blogs = db.query(models.Blog).all()
     return blogs 
 
-@app.get('/blog/{id}')
-def getBlog(id, db: Session = Depends(get_db)):
+@app.get('/blog/{id}', status_code=200)
+def getBlog(id, response: Response,db: Session = Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id == id).first()
+    if not blog:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Blog with id {id} is not available')
+        #response.status_code = status.HTTP_404_NOT_FOUND
+        #return {'Detail': f'Blog with id {id} is not available'}
     return blog
