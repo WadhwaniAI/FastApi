@@ -1,7 +1,7 @@
 from typing import List
-from fastapi import APIRouter, Depends, status, HTTPException, Response
+from fastapi import APIRouter, Depends, status, Response
 from repository import blogRepo
-import schemas, database, database, hashing
+import schemas, database, database
 from sqlalchemy.orm import Session  
 
 router = APIRouter(
@@ -20,7 +20,7 @@ def create(request: schemas.Blog, db: Session = Depends(get_db)) :
     return blogRepo.create(db, request)
 
 @router.get('/{id}', status_code=status.HTTP_200_OK, response_model=schemas.ShowBlog)
-def get(id, response: Response,db: Session = Depends(get_db)):
+def get(id,db: Session = Depends(get_db)):
     return blogRepo.get(id, db)
 
 @router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
